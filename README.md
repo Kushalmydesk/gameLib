@@ -19,19 +19,19 @@ Before getting started with the Weather App repository, ensure that you have the
 
 1.  Clone the repository:
 
-```bash
+```console
   git clone https://github.com/Kushalmydesk/game_lib.git
 ```
 
 3.  Navigate to the project directory:
 
-```bash
+```console
     cd root_folder
 ```
 
 5.  Install the dependencies:
 
-```bash
+```console
     npm install
 ```
 
