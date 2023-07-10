@@ -95,15 +95,12 @@ Before getting started with the Weather App repository, ensure that you have the
 
   - [controllers](#controllers)
     - game.controller.ts
-    - image.controller.ts
     - series.controller.ts
   - [models](#models)
     - game.model.ts
-    - image.model.ts
     - series.model.ts
   - [routes](#routes)
     - game.route.ts
-    - image.route.ts
     - series.route.ts
   - [services](#services)
     - firebase.service.ts
@@ -155,7 +152,7 @@ Before getting started with the Weather App repository, ensure that you have the
 
   - Interface: The code declares an interface named `IGame` that extends the `Document` interface from Mongoose. It defines the structure and types of the properties that a "Game" document should have.
 
-  - Schema Definition: The code creates a new schema named `gameSchema` using the `Schema` class from Mongoose. The schema defines the fields and their types for a "Game" document. These fields include `title`, `genre`, `platform`, `releaseYear`, `developer`, `publisher`, `description`, `image`, `rating`, `tags`, `languages`, `multiplayer`, `platforms`, and `seriesId`.
+  - Schema Definition: The code creates a new schema named `gameSchema` using the `Schema` class from Mongoose. The schema defines the fields and their types for a "Game" document. These fields include `title`, `genre`, `platform`, `releaseYear`, `developer`, `publisher`, `description`, `image`, `rating`, `tagArray`, `langArray`, `multiplayer`, `platformArray`, and `seriesId`.
 
   - Schema Options: The schema is configured with some options:
 
@@ -163,24 +160,6 @@ Before getting started with the Weather App repository, ensure that you have the
     - `versionKey: false` - Disables the versioning feature of Mongoose.
 
   - Export: The code exports a Mongoose model named "Games". It checks if the model already exists (`models.Games`) and returns it if it does. Otherwise, it creates a new model using `model<IGame>("Games", gameSchema)` and exports it.
-  <hr>
-
-- ### [image.model.ts](/src/models/image.model.ts)
-
-  - This code defines a Mongoose schema and model for an "Image" entity. Here's an explanation of the code using keywords:
-
-  - Dependencies: The code imports necessary dependencies from the Mongoose library, including `Schema`, `models`, `model`, `Model`, and `Document`.
-
-  - Interface: The code declares an interface named `IImage` that extends the `Document` interface from Mongoose. It defines the structure and types of the properties that an "Image" document should have.
-
-  - Schema Definition: The code creates a new schema named `imageSchema` using the `Schema` class from Mongoose. The schema defines the fields and their types for an "Image" document. These fields include `name`, `imageUrl`, and `gameId`.
-
-  - Schema Options: The schema is configured with some options:
-
-    - `timestamps: true` - Enables the automatic generation of `createdAt` and `updatedAt` timestamps for the documents.
-    - `versionKey: false` - Disables the versioning feature of Mongoose.
-
-  - Export: The code exports a Mongoose model named "Image". It checks if the model already exists (`models.Image`) and returns it if it does. Otherwise, it creates a new model using `model<IImage>("Image", imageSchema)` and exports it.
   <hr>
 
 - ### [series.model.ts](/src/models/series.model.ts)
@@ -205,45 +184,42 @@ Before getting started with the Weather App repository, ensure that you have the
 
 - ### [game.controller.ts](/src/controllers/game.controller.ts)
 
-  - Dependencies: The code imports necessary dependencies from Express and the required models (`Game` and `Series`).
+  - `getGames`: This function retrieves all games from the database by calling `Game.find({})`. The retrieved games are then sent as a response with a status code of 200.
 
-  - `getGames` Function: This function handles the retrieval of all games. It uses `Game.find({})` to fetch all game documents from the database and sends the response with a 200 status code and the retrieved games.
+  - `getGamesById`: This function retrieves a game by its ID. It extracts the game ID from the request parameters and uses `Game.findById` to find the game. The retrieved game is then sent as a response with a status code of 200.
 
-  - `getGamesById` Function: This function retrieves a specific game based on the provided `id` parameter. It uses `Game.findById(gameId)` to find the game by its ID and sends the response with a 200 status code and the retrieved game.
+  - `createGame`: This function is responsible for creating a new game. It extracts the necessary game information from the request body, including the title, genre, platform, release year, developer, publisher, description, rating, tags, languages, multiplayer, platforms, and series name.
 
-  - `createGame` Function: This function handles the creation of a new game. It extracts the necessary game data from the request body, creates a new `Game` instance, and saves it to the database using `newGame.save()`. It also updates the associated series by adding the new game's ID to its `games` array. The function sends a response with a 201 status code and the saved game.
+    - It first checks if an image file is included in the request (`!req.file`). If not, it returns a response with a status code of 400 and a message indicating that the file is not found.
 
-  - `deleteGame` Function: This function deletes a game based on the provided `id` parameter. It uses `Game.findByIdAndDelete(gameId)` to delete the game from the database. If the game is successfully deleted, it checks if the associated series exists. If it does, it removes the game's ID from the series' `games` array using `Series.findByIdAndUpdate(seriesId, { $pop: { games: 1 } })`. The function sends a response with a 200 status code and a success message if the game deletion and series update are successful. Otherwise, it sends an appropriate error response.
-  <hr>
+    - It then uploads the image to Firebase storage by calling `upload_Img` function and passing the file and title as arguments. The function returns the downloadable image URL, which is stored in the `imageUrl` variable.
 
-- ### [image.controller.ts](/src/controllers/image.controller.ts)
+    - It retrieves the `seriesId` by querying the `Series` collection based on the provided `seriesName`.
 
-  - Dependencies: The code imports necessary dependencies from Express and the required models (`Image` and `Game`). It also imports the `upload_Img` function from the `firebase.service` file.
+    - It splits the tags, languages, and platforms into arrays by using the `split` method and mapping over the resulting strings.
 
-  - `uploadImage` Function: This function handles the image upload process. It expects a file to be present in the request (`req.file`) and also requires `name` and `gameId` properties in the request body (`req.body`).
+    - It creates a new instance of the `Game` model with all the extracted information and saves it to the database.
 
-  - File Validation: The function checks if a file exists in the request (`!req.file`). If no file is found, it sends a response with a 400 status code and a message indicating that the file was not found.
+    - It updates the `games` array of the corresponding series by calling `Series.findByIdAndUpdate` and using the `$push` operator to add the newly created game's ID.
 
-  - Image Upload: The function proceeds with the image upload process. It calls the `upload_Img` function (presumably a custom implementation) and passes the file and name to it. This function is responsible for uploading the image file to a storage service (e.g., Firebase Storage) and returning the URL of the uploaded image (`imageUrl`).
+    - Finally, it sends a response with a status code of 201 and the saved game object.
 
-  - Creating Image Document: After the image is uploaded, the function creates a new `Image` instance using the `name`, `imageUrl`, and `gameId` obtained from the request.
+  - `deleteGame`: This function deletes a game by its ID. It extracts the game ID from the request parameters and uses `Game.findByIdAndDelete` to delete the game from the database. If the game is successfully deleted, it checks if the corresponding series exists and updates the `games` array of the series by using `Series.findByIdAndUpdate` and the `$pop` operator to remove the game's ID. Finally, it sends a response with a status code of 200 and a success message.
 
-  - Saving Image and Updating Game: The function saves the new `image` document to the database using `image.save()`. It then finds the associated game document by its `gameId` and updates its `image` field with the newly created image's ID using `Game.findByIdAndUpdate(gameId, { $set: { image: image._id } })`.
-
-  - Response: The function sends a response with a 201 status code and a success message, along with information about the uploaded image such as `imageUrl`, `name`, and `type` (obtained from the file).
-
-  - Error Handling: If any error occurs during the process, it is caught and logged. The function sends a response with a 500 status code and an error message indicating the failure to upload the image.
   <hr>
 
 - ### [series.controller.ts](/src/controllers/series.controller.ts)
 
-  - Dependencies: The code imports necessary dependencies from Express and the required models (`Series` and `Game`).
+  - `getSeries`: This function retrieves all series from the database by calling `Series.find({})`. The retrieved series are then sent as a response with a status code of 200.
 
-  - `getSeries` Function: This function handles the retrieval of all series. It uses `Series.find({})` to fetch all series documents from the database and sends the response with a 200 status code and the retrieved series.
+  - `getGamesBySeries`: This function retrieves all games associated with a specific series. It extracts the `seriesId` from the request parameters and uses `Series.findById` to find the series. If the series does not exist, it returns a response with a status code of 404 and a message indicating that no series is found.
 
-  - `getGamesBySeries` Function: This function retrieves all games belonging to a specific series. It expects the `seriesId` parameter in the request (`req.params.seriesId`). It first finds the series document by its ID using `Series.findById(seriesId)`. If the series document is not found, it sends a response with a 404 status code and a message indicating that no series was found. If the series is found, it extracts the `games` array from the series document and uses it to find the corresponding game documents using `Game.find({ _id: { $in: gameIds } })`. The function sends a response with a 200 status code and the retrieved games, sorted by their `releaseYear`.
+    - If the series is found, it retrieves the `games` array from the series and uses the `$in` operator in a query to find all games whose IDs match the ones in the `games` array. The retrieved games are sorted by their release year in ascending order.
 
-  - `createSeries` Function: This function handles the creation of a new series. It expects the `title` property in the request body (`req.body`). It creates a new `Series` instance with the provided title and saves it to the database using `newSeries.save()`. The function sends a response with a 201 status code and the saved series.
+    - It sends a response with a status code of 200 and includes the series name, a success message, and the retrieved games.
+
+  - `createSeries`: This function creates a new series. It extracts the `title` from the request body and creates a new instance of the `Series` model with the provided title. The new series is then saved to the database, and a response with a status code of 201 and the saved series object is sent.
+
   <hr>
 
 ## Routes
@@ -252,35 +228,16 @@ Before getting started with the Weather App repository, ensure that you have the
 
 - ### [game.route.ts](/src/routes/game.route.ts)
 
-  - Dependencies: The code imports necessary dependencies from Express, including `express` and `Router`. It also imports the game-related controller functions (`createGame`, `deleteGame`, `getGames`, `getGamesById`) from the `game.controller` file.
+  - `upload`: This is the multer configuration that specifies the storage options and limits for file uploads. It uses `multer.memoryStorage()` to store the uploaded file in memory and sets a limit of 10MB for the file size.
 
-  - Router Initialization: The code creates a new router instance using `express.Router()` and assigns it to the `router` variable.
+  - `router.post("/game", [upload.single("image")], createGame)`: This route is used for creating games. It uses the `[upload.single("image")]` middleware to handle the image upload. The `single()` function specifies that only a single file with the field name "image" should be uploaded. The uploaded file can be accessed in the `createGame` controller function via `req.file`.
 
-  - Route Definitions:
+  - `router.get("/game", getGames)`: This route is used for retrieving all games. It calls the `getGames` controller function when a GET request is made to this endpoint.
 
-    - `POST /game`: This route is responsible for creating games. It maps to the `createGame` controller function defined in the game controller file.
-    - `GET /game`: This route is responsible for retrieving all games. It maps to the `getGames` controller function defined in the game controller file.
-    - `GET /game/:id`: This route is responsible for retrieving a specific game by its ID. It maps to the `getGamesById` controller function defined in the game controller file.
-    - `DELETE /game/:id`: This route is responsible for deleting a game by its ID. It maps to the `deleteGame` controller function defined in the game controller file.
+  - `router.get("/game/:id", getGamesById)`: This route is used for retrieving a specific game by its ID. It calls the `getGamesById` controller function when a GET request with a game ID is made to this endpoint.
 
-  - Export: The code exports the router instance to be used in other parts of the application.
-  <hr>
+  - `router.delete("/game/:id", deleteGame)`: This route is used for deleting a specific game by its ID. It calls the `deleteGame` controller function when a DELETE request with a game ID is made to this endpoint.
 
-- ### [image.route.ts](/src/routes/image.route.ts)
-
-  - Dependencies: The code imports necessary dependencies from Express, including `express` and `Router`. It also imports the `multer` middleware for handling file uploads and the `uploadImage` controller function from the `image.controller` file.
-
-  - Multer Configuration: The code includes commented out code that defines the storage and filename logic for saving uploaded files to the disk. This code is not currently used in the router.
-
-  - Multer Upload Middleware: The code configures the `multer` middleware using `multer({ storage, fileFilter })`. In this case, it uses `multer.memoryStorage()` as the storage engine, which stores the uploaded file in memory as a buffer. It also sets a limit of 10MB for the file size.
-
-  - Router Initialization: The code creates a new router instance using `express.Router()` and assigns it to the `router` variable.
-
-  - Route Definition:
-
-    - `POST /upload`: This route is responsible for uploading an image file. It uses the `upload` middleware to handle the file upload. The `upload.single("image")` specifies that it expects a single file with the field name "image". It then maps to the `uploadImage` controller function defined in the image controller file.
-
-  - Export: The code exports the router instance to be used in other parts of the application.
   <hr>
 
 - ### [series.route.ts](/src/routes/series.route.ts)
@@ -320,7 +277,4 @@ Before getting started with the Weather App repository, ensure that you have the
 - Route Setup: The code sets up the API routes for game services, image services, and series services. It prefixes these routes with `/api` using `app.use("/api", ...)`.
 
 - Database Connection: The code calls the `connectToDB` function to establish a connection to the MongoDB database using Mongoose. If the connection is successful, it starts the server by calling `app.listen()` and logs a success message with the server URL. If there's an error during the connection, it logs an error message and exits the process.
-
-```
-
-```
+<hr>

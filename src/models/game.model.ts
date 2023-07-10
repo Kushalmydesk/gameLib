@@ -13,11 +13,12 @@ export interface IGame extends Document {
   description: string;
   image: Schema.Types.ObjectId;
   rating: string;
-  tags: string[];
-  languages: string[];
+  tagArray: string[];
+  langArray: string[];
   multiplayer: boolean;
-  platforms: string[];
+  platformArray: string[];
   seriesId: Schema.Types.ObjectId;
+  imageUrl: string;
 }
 
 const gameSchema: Schema = new Schema<IGame>(
@@ -31,14 +32,15 @@ const gameSchema: Schema = new Schema<IGame>(
     description: { type: String, required: true },
     image: { type: Schema.Types.ObjectId, ref: "Image" },
     rating: { type: String, required: true },
-    tags: { type: [String], required: false, default: [] },
-    languages: { type: [String], required: false, default: [] },
+    tagArray: { type: [String], required: false, default: [] },
+    langArray: { type: [String], required: false, default: [] },
     multiplayer: { type: Boolean, required: true },
-    platforms: { type: [String], required: true },
-    seriesId : {type: Schema.Types.ObjectId, ref: "Series"}
+    platformArray: { type: [String], required: true },
+    seriesId: { type: Schema.Types.ObjectId, ref: "Series" },
+    imageUrl: { type: String, required: true, default: "" },
   },
   {
-    timestamps: false,
+    timestamps: true,
     versionKey: false,
   }
 );

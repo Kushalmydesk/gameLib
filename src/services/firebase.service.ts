@@ -15,14 +15,17 @@ let app: FirebaseApp;
 
 export function getFirebaseApp(): FirebaseApp {
   if (getApps().length === 0) {
-    app = initializeApp({
-      apiKey: process.env.API_KEY,
-      authDomain: process.env.AUTH_DOMAIN,
-      projectId: process.env.PROJECT_ID,
-      storageBucket: process.env.STORAGE_BUCKET,
-      messagingSenderId: process.env.MESSAGING_SENDER_ID,
-      appId: process.env.APP_ID,
-    }, 'FireApp');
+    app = initializeApp(
+      {
+        apiKey: process.env.API_KEY,
+        authDomain: process.env.AUTH_DOMAIN,
+        projectId: process.env.PROJECT_ID,
+        storageBucket: process.env.STORAGE_BUCKET,
+        messagingSenderId: process.env.MESSAGING_SENDER_ID,
+        appId: process.env.APP_ID,
+      },
+      "FireApp"
+    );
   } else {
     app = getApp();
   }
@@ -31,17 +34,15 @@ export function getFirebaseApp(): FirebaseApp {
   return app;
 }
 
-  app = getFirebaseApp();
-  if(!app) console.log("No App Initialized");
-
+app = getFirebaseApp();
+if (!app) console.log("No App Initialized");
 
 const storage: FirebaseStorage = getStorage(app);
-if(!storage){
-  console.log("Store is not available")
+if (!storage) {
+  console.log("Store is not available");
 }
 
-
-//handling the Needed Firebase Associated Function Here 
+//handling the Needed Firebase Associated Function Here
 export const upload_Img = async (file: Express.Multer.File, name: string) => {
   //Creating a storage Reference
   const storageRef = ref(storage, `files/${name}_${Date.now()}`);

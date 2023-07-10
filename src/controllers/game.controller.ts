@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import Game, { IGame } from "../models/game.model";
 import Series from "../models/series.model";
+import { upload_Img } from "../services/firebase.service";
 
-//This is the function for getting
+//This is the function for getting games
 export const getGames = async (
   req: Request,
   res: Response,
@@ -34,12 +35,12 @@ export const getGamesById = async (
   }
 };
 
-//This is the dunction for creating
+//This is the function for creating games
 export const createGame = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<Response> => {
   try {
     const {
       title,
@@ -54,8 +55,34 @@ export const createGame = async (
       languages,
       multiplayer,
       platforms,
-      seriesId,
+      seriesName,
     } = req.body;
+
+    //Checkin if any File is given or not
+    if (!req.file) {
+      return res.status(400).send({ message: "File not found" });
+    }
+
+    const file = req.file;
+    const imageUrl = await upload_Img(file, title); // getting the downloadable imageUrl from Firebase
+
+    //Retriving the seriesId from provided SeriesName
+    const seriesId = await Series.findOne({ title: seriesName }, { _id: 1 });
+    if (!seriesId) {
+      return res.status(400).send({ message: "Series not found" });
+    }
+
+    //Converting to Array
+    const tagsString = tags;
+    const tagArray = tagsString.split(",").map((tag: string) => tag.trim());
+
+    const langString = languages;
+    const langArray = langString.split(",").map((lang: string) => lang.trim());
+
+    const platformString = platforms;
+    const platformArray = platformString
+      .split(",")
+      .map((plat: string) => plat.trim());
 
     const newGame = new Game({
       title,
@@ -66,11 +93,12 @@ export const createGame = async (
       publisher,
       description,
       rating,
-      tags,
-      languages,
+      tagArray,
+      langArray,
       multiplayer,
-      platforms,
+      platformArray,
       seriesId,
+      imageUrl,
     });
 
     const savedGame: IGame = await newGame.save();
@@ -89,6 +117,8 @@ export const createGame = async (
       .send({ message: err.message, error: "Internal Server Error" });
   }
 };
+
+// Controller for Deleting the Game
 
 export const deleteGame = async (
   req: Request,

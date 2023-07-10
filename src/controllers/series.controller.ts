@@ -17,19 +17,22 @@ export const getGamesBySeries = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<Response> => {
   try {
-    const  {seriesId}  = req.params;
+    const { seriesId } = req.params;
     const series = await Series.findById(seriesId).exec();
 
     if (!series) {
-      res.status(404).send({ succes: false, message: "No Series Found!" });
-      return;
+      return res
+        .status(404)
+        .send({ succes: false, message: "No Series Found!" });
     }
 
     const gameIds = series.games;
 
-    const games = await Game.find({ _id: { $in: gameIds } }).sort({releaseYear: 1}).exec();
+    const games = await Game.find({ _id: { $in: gameIds } })
+      .sort({ releaseYear: 1 })
+      .exec();
 
     res.status(200).send({
       success: true,
@@ -51,7 +54,7 @@ export const getGamesBySeries = async (
 export const createSeries = async (
   req: Request,
   res: Response
-): Promise<void> => {
+): Promise<Response> => {
   try {
     const { title } = req.body;
 
@@ -59,7 +62,7 @@ export const createSeries = async (
 
     const savedSeries = await newSeries.save();
 
-    res.status(201).send(savedSeries);
+    return res.status(201).send(savedSeries);
   } catch (err) {
     console.log("Erro creating series", err.message);
   }
