@@ -54,7 +54,7 @@ Before getting started with the Weather App repository, ensure that you have the
   - [services](#services)
     - firebase.service.ts
     - mongodb.service.ts
-  - [index.ts](###index.ts)
+  - [index.ts](#indexts)
 
   <hr>
 
@@ -245,6 +245,8 @@ Before getting started with the Weather App repository, ensure that you have the
     <hr>
 
 ## [index.ts](/src/index.ts)
+
+[to Folder_Structure](#folder-structure)
 
 - Dependencies: The code imports necessary dependencies from various packages, including `express`, `body-parser`, `cookie-parser`, `compression`, `cors`, `dotenv`, and `Error` from Mongoose. It also imports the `connectToDB` function from the `mongodb.service` file, as well as the route handlers from the respective route files (`game.route`, `image.route`, `series.route`).
 
