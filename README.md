@@ -7,6 +7,7 @@
 <img src="https://camo.githubusercontent.com/dd4b2422ed3bfc9da88c43d18550375c66f9584327dff7ecc19315ce50b96f07/68747470733a2f2f7777772e766563746f726c6f676f2e7a6f6e652f6c6f676f732f66697265626173652f66697265626173652d69636f6e2e737667" alt="Firebase" height="60" >
 <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mongodb/mongodb-original-wordmark.svg" alt="mongodb" height="60">
 </div>
+<hr>
 This GitHub repository contains the source code for a Game-library application backend built with node.js & Typescript mainly.
 
 ### Prerequisites
@@ -52,6 +53,7 @@ Before getting started with the Weather App repository, ensure that you have the
   - `ext`: Specifies the file extensions that Nodemon should consider when watching for changes. In this case, it is set to `".ts,.js"`, indicating that Nodemon will watch for changes in both TypeScript (`.ts`) and JavaScript (`.js`) files.
 
   - `exec`: Specifies the command that Nodemon should execute when a change is detected. In this case, it is set to `"ts-node ./src/index.ts"`, indicating that Nodemon should execute the TypeScript files (`index.ts`) using the `ts-node` command. This allows for automatic compilation and execution of TypeScript files without the need for manual compilation steps.
+  <hr>
 
 - ### [tsconfig.json](/tsconfig.json)
 
@@ -70,6 +72,7 @@ Before getting started with the Weather App repository, ensure that you have the
   - `include`: Specifies the files or patterns to include in the TypeScript compilation. In this case, it includes all `.ts` files in the `"src"` directory and its subdirectories.
 
   - `exclude`: Specifies the files or patterns to exclude from the TypeScript compilation. In this case, it excludes the `"node_modules"` directory.
+  <hr>
 
 - ### [package.json](/package.json)
 
@@ -83,6 +86,8 @@ Before getting started with the Weather App repository, ensure that you have the
   - `devDependencies`: This section lists the development dependencies, which are packages required during development but not during production runtime. These dependencies include various TypeScript type definitions (`@types/...` packages) for improved TypeScript development, such as type definitions for Express, MongoDB, Mongoose, Multer, etc.
 
   - `dependencies`: This section lists the runtime dependencies, which are packages required for the application to run in production. These dependencies include packages like `express`, `dotenv`, `cors`, `mongoose`, `multer`, `firebase`, etc., which are used for server-side development, database operations, file handling, and Firebase integration.
+
+  <hr>
 
 ## Folder Structure
 
