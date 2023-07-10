@@ -23,17 +23,66 @@ Before getting started with the Weather App repository, ensure that you have the
   git clone https://github.com/Kushalmydesk/game_lib.git
 ```
 
-3.  Navigate to the project directory:
+2.  Navigate to the project directory:
 
 ```console
     cd root_folder
 ```
 
-5.  Install the dependencies:
+3.  Install the dependencies:
 
 ```console
     npm install
 ```
+
+3.  Run on Local Server:
+
+```console
+    npm run dev
+```
+
+## Configurations
+
+- ### [nodemon.json](/nodemon.json)
+
+  **Nodemon** is a development tool that improves the development workflow by automatically restarting the Node.js application whenever changes are made to the watched files. It eliminates the need for manually stopping and restarting the application during development, providing a faster and more efficient development experience. The nodemon.json file configures Nodemon with the directories to watch, the file extensions to consider, and the command to execute when changes are detected.
+
+  - `watch`: Specifies the directories or files that Nodemon should watch for changes. In this case, it is set to watch the `"src"` directory, indicating that any changes to files within that directory will trigger a restart of the application.
+
+  - `ext`: Specifies the file extensions that Nodemon should consider when watching for changes. In this case, it is set to `".ts,.js"`, indicating that Nodemon will watch for changes in both TypeScript (`.ts`) and JavaScript (`.js`) files.
+
+  - `exec`: Specifies the command that Nodemon should execute when a change is detected. In this case, it is set to `"ts-node ./src/index.ts"`, indicating that Nodemon should execute the TypeScript files (`index.ts`) using the `ts-node` command. This allows for automatic compilation and execution of TypeScript files without the need for manual compilation steps.
+
+- ### [tsconfig.json](/tsconfig.json)
+
+  - `module`: Specifies the module code generation for TypeScript. In this case, it is set to `"NodeNext"`.
+
+  - `moduleResolution`: Specifies how module dependencies are resolved. In this case, it is set to `"node"`, indicating that Node.js-style module resolution will be used.
+
+  - `baseUrl`: Specifies the base directory for module resolution. In this case, it is set to `"src"`, indicating that module resolution will start from the `"src"` directory.
+
+  - `outDir`: Specifies the output directory for the compiled TypeScript files. In this case, it is set to `"dist"`, indicating that the compiled JavaScript files will be placed in the `"dist"` directory.
+
+  - `sourceMap`: Specifies whether to generate source map files (.map) for the compiled JavaScript files. In this case, it is set to `true`, indicating that source map files will be generated.
+
+  - `noImplicitAny`: Specifies whether to raise an error on expressions and declarations with an implied `any` type. In this case, it is set to `true`, indicating that TypeScript will report an error if it cannot infer the type and no type annotation is specified.
+
+  - `include`: Specifies the files or patterns to include in the TypeScript compilation. In this case, it includes all `.ts` files in the `"src"` directory and its subdirectories.
+
+  - `exclude`: Specifies the files or patterns to exclude from the TypeScript compilation. In this case, it excludes the `"node_modules"` directory.
+
+- ### [package.json](/package.json)
+
+  - `scripts`: This section defines various scripts that can be run using `npm run [script-name]` command:
+
+    - `start`: This script runs the compiled JavaScript files in the `dist` directory using the `node` command.
+    - `build`: This script runs the TypeScript compiler (`tsc`) to compile the TypeScript files into JavaScript files.
+    - `dev`: This script uses `nodemon` to monitor changes in the source files and automatically restart the server during development.
+    - `test`: This script is a placeholder and currently only echoes an error message.
+
+  - `devDependencies`: This section lists the development dependencies, which are packages required during development but not during production runtime. These dependencies include various TypeScript type definitions (`@types/...` packages) for improved TypeScript development, such as type definitions for Express, MongoDB, Mongoose, Multer, etc.
+
+  - `dependencies`: This section lists the runtime dependencies, which are packages required for the application to run in production. These dependencies include packages like `express`, `dotenv`, `cors`, `mongoose`, `multer`, `firebase`, etc., which are used for server-side development, database operations, file handling, and Firebase integration.
 
 ## Folder Structure
 
@@ -266,3 +315,7 @@ Before getting started with the Weather App repository, ensure that you have the
 - Route Setup: The code sets up the API routes for game services, image services, and series services. It prefixes these routes with `/api` using `app.use("/api", ...)`.
 
 - Database Connection: The code calls the `connectToDB` function to establish a connection to the MongoDB database using Mongoose. If the connection is successful, it starts the server by calling `app.listen()` and logs a success message with the server URL. If there's an error during the connection, it logs an error message and exits the process.
+
+```
+
+```
