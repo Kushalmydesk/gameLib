@@ -19,14 +19,13 @@ export const getGames = async (
 export const getGamesById = async (
   req: Request,
   res: Response
-): Promise<void>  => {
+): Promise<void> => {
   try {
-    const gameId  = req.params.id;
-    
+    const gameId = req.params.id;
 
     const game: IGame = await Game.findById(gameId).exec();
-    res.status(200).send({ 
-       game
+    res.status(200).send({
+      game,
     });
   } catch (err) {
     res
@@ -96,13 +95,12 @@ export const deleteGame = async (
   res: Response
 ): Promise<void> => {
   try {
-    const  gameId  = req.params.id;
+    const gameId = req.params.id;
     const deletedGame: IGame = await Game.findByIdAndDelete(gameId).exec();
 
     if (!deletedGame) {
       res.status(404).send({ success: false, message: "Game not found" });
       return;
-      
     } else {
       const seriesId = deletedGame.seriesId;
       const series = Series.findById(seriesId).exec();
